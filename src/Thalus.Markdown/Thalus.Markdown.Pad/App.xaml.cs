@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,9 +21,14 @@ namespace Thalus.Markdown.Pad
 
             MainViewModel mdl = new MainViewModel();
 
+            if (args.Any(i => i == "."))
+            {
+                args = Directory.GetFiles(Environment.CurrentDirectory, "*.md");
+            }
+
             try
             {
-                foreach (string s in args.Where(i=> !i.EndsWith(".exe")))
+                foreach (string s in args)
                 {
                     FileInfo fi = new FileInfo(s);
                     if (fi.Exists)
