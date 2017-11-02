@@ -1,0 +1,52 @@
+﻿<UserControl x:Class="Thalus.Markdown.Controls.MarkdownRenderControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             xmlns:controls="clr-namespace:Thalus.Markdown.Controls"
+             xmlns:converter="clr-namespace:Thalus.Markdown.Controls.Converter"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300" DataContext="{Binding}">
+    <UserControl.CommandBindings>
+    <CommandBinding 
+        Command="NavigationCommands.GoToPage" 
+        Executed="PerformGoToPage" 
+        CanExecute="CanGoToPage" />
+    </UserControl.CommandBindings>
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Thalus.Markdown.Controls;component/Resources/Thalus.Markdown.Controls.Style.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <controls:Markdown x:Key="Markdown"
+                               DocumentStyle="{StaticResource DocumentStyle}"
+                               Heading1Style="{StaticResource H1Style}"
+                               Heading2Style="{StaticResource H2Style}"
+                               Heading3Style="{StaticResource H3Style}"
+                               Heading4Style="{StaticResource H4Style}"
+                               LinkStyle="{StaticResource LinkStyle}"
+                               ImageStyle="{StaticResource ImageStyle}"
+                               CodeStyle="{StaticResource CodeStyle}"
+                               SeparatorStyle="{StaticResource SeparatorStyle}"/>
+            <converter:TextToFlowDocumentConverter x:Key="TextToFlowDoc" Markdown="{StaticResource Markdown}"/>
+            <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <DockPanel LastChildFill="True">
+            <DockPanel DockPanel.Dock="Top" Height="25"  Margin="0,5,0,5" Visibility="{Binding IsButtonBarVisible,Converter={StaticResource BoolToVis}}">
+                <Button DockPanel.Dock="Right" Width="35" HorizontalAlignment="Right" Visibility="{Binding IsNormal,Converter={StaticResource BoolToVis}}" Command="{Binding Toggle}" Margin="5,0,0,0">Raw</Button>
+                <Button DockPanel.Dock="Right" Width="35" HorizontalAlignment="Right" Visibility="{Binding IsRaw,Converter={StaticResource BoolToVis}}"  Command="{Binding Toggle}">Show</Button>
+            </DockPanel>
+            <Grid DockPanel.Dock="Top">
+                <TextBox DockPanel.Dock="Top" Text="{Binding MarkdownText}" Visibility="{Binding IsRaw,Converter={StaticResource BoolToVis}}" AcceptsReturn="True" TextWrapping="WrapWithOverflow" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalScrollBarVisibility="Auto">
+                    <TextBox.InputBindings>
+                        <KeyBinding Key="S" Modifiers="Control" Command="{Binding PerformSaveCommand}"></KeyBinding>
+                    </TextBox.InputBindings>
+                </TextBox>
+                <FlowDocumentScrollViewer Document="{Binding MarkdownText,Converter={StaticResource TextToFlowDoc}}" DockPanel.Dock="Top" Visibility="{Binding IsNormal,Converter={StaticResource BoolToVis}}"/>
+            </Grid>
+        </DockPanel>
+    </Grid>
+</UserControl>
